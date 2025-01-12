@@ -49,4 +49,21 @@ public class ChzzkApiServiceTest {
                 .isInstanceOf(ChzzkException.class)
                 .hasMessage(ChzzkExceptionCode.CHANNEL_INFO_NOT_FOUND.getMessage());
     }
+
+    @Test
+    @DisplayName("영상 도네이션 세팅 정보를 가져올 수 있다.")
+    void getVideoSetting() {
+        // when
+        assertThatCode(() -> chzzkApiService.getVideoSetting(DdahyoniChannelId))
+                .doesNotThrowAnyException();
+    }
+
+    @Test
+    @DisplayName("영상 도네이션 세팅 정보를 가져올 수 없다 : 채널 id가 잘못된 경우")
+    void getVideoSetting_InvalidChannelId_Exception() {
+        // when
+        assertThatThrownBy(() -> chzzkApiService.getVideoSetting("1"))
+                .isInstanceOf(ChzzkException.class)
+                .hasMessage(ChzzkExceptionCode.CHANNEL_ID_INVALID.getMessage());
+    }
 }

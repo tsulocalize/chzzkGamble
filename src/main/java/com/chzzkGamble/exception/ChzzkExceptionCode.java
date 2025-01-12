@@ -17,6 +17,7 @@ public enum ChzzkExceptionCode implements ChzOnMeExceptionCode {
     CHANNEL_INFO_NOT_FOUND(BAD_REQUEST, 1_003, "채널 정보를 찾아오지 못했습니다."),
     CHANNEL_NAME_INVALID(BAD_REQUEST, 1_006, "유효하지 않은 채널명입니다."),
     CHANNEL_LIVE_CLOSED(BAD_REQUEST, 1_007, "현재 방송중이 아닌 채널입니다."),
+    CHANNEL_SETTING_FETCH_ERROR(INTERNAL_SERVER_ERROR, 1_008, "영상 도네이션 세팅을 가져오는 데 실패했습니다."),
 
     // chat 2_xxx
     CHAT_IS_CONNECTED(BAD_REQUEST, 2_001, "채팅방과 이미 연결되어 있습니다."),

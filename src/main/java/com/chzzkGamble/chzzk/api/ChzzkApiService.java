@@ -2,6 +2,7 @@ package com.chzzkGamble.chzzk.api;
 
 import com.chzzkGamble.chzzk.dto.ChannelInfoApiResponse;
 import com.chzzkGamble.chzzk.dto.ChatInfoApiResponse;
+import com.chzzkGamble.chzzk.dto.VideoSettingResponse;
 import com.chzzkGamble.exception.ChzzkException;
 import com.chzzkGamble.exception.ChzzkExceptionCode;
 import com.google.gson.Gson;
@@ -69,5 +70,25 @@ public class ChzzkApiService {
                 .getAsJsonObject("content");
 
         return content.get("accessToken").getAsString();
+    }
+
+    public VideoSettingResponse getVideoSetting(String channelId) {
+        String url = "https://api.chzzk.naver.com/service/v1/channels/" + channelId + "/donations/video-setting";
+        String jsonString;
+        try {
+            jsonString = restClient.get(url);
+            System.out.println("jsonString = " + jsonString);
+        } catch (HttpServerErrorException.InternalServerError internalServerError) {
+            throw new ChzzkException(ChzzkExceptionCode.CHANNEL_SETTING_FETCH_ERROR);
+        }
+
+        JsonObject videoSetting = JsonParser.parseString(jsonString)
+                .getAsJsonObject()
+                .getAsJsonObject("content");
+        if (videoSetting.get("payAmountPerSecond").getAsInt() == 0) {
+            throw new ChzzkException(ChzzkExceptionCode.CHANNEL_ID_INVALID);
+        }
+
+        return gson.fromJson(videoSetting, VideoSettingResponse.class);
     }
 }
