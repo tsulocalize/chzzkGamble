@@ -60,7 +60,10 @@ public class AdvertiseServiceTest {
         advertiseService.updateAdvertiseMap();
 
         // then
-        assertThat(advertiseService.getAdvertise().getName()).isEqualTo("따효니");
+        List<ApprovalAdvertiseResponse> approvalAdvertise = advertiseService.getApprovalAdvertise();
+        assertThat(approvalAdvertise.stream()
+                .anyMatch(approvalAdvertiseResponse -> approvalAdvertiseResponse.name().equals("따효니")))
+                .isTrue();
     }
 
     @Test
