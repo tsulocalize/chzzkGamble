@@ -22,7 +22,7 @@ public class VideoDonationHandler {
             return CompletableFuture.completedFuture(false);
         }
         videoDonationService.save(donationMessage.getChannelName(), donationMessage.getCheese(),
-                donationMessage.getMsg());
+                donationMessage.getMsg(), donationMessage.isHighlighter());
         return CompletableFuture.completedFuture(true);
     }
 }

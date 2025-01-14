@@ -1,6 +1,7 @@
 package com.chzzkGamble.chzzk.dto;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import lombok.Getter;
@@ -14,6 +15,7 @@ public class DonationMessage {
     int cheese;
     String msg;
     DonationType type;
+    boolean isHighlighter = false;
 
     public DonationMessage(String channelName, WebSocketMessage<?> message) {
         this.channelName = channelName;
@@ -29,6 +31,10 @@ public class DonationMessage {
                 String extras = jsonObject.get("extras").getAsJsonPrimitive().getAsString();
                 this.cheese = parseCheese(extras);
                 this.type = DonationType.from(parseType(extras));
+            }
+            if (!(jsonObject.get("profile") instanceof JsonNull)) {
+                String profile = jsonObject.get("profile").getAsString();
+                this.isHighlighter = parseHighlighter(profile);
             }
         }
     }
@@ -51,6 +57,15 @@ public class DonationMessage {
         return "";
     }
 
+    private static boolean parseHighlighter(String profile) {
+        for (String s : StringUtils.commaDelimitedListToSet(profile)) {
+            if (s.contains("tier")) {
+                return s.split(":")[1].equals("2");
+            }
+        }
+        return false;
+    }
+
     public boolean isDonation() {
         return cheese != 0;
     }
@@ -66,6 +81,7 @@ public class DonationMessage {
                 ", cheese=" + cheese +
                 ", msg='" + msg + '\'' +
                 ", type=" + type +
+                ", isHighlighter=" + isHighlighter +
                 '}';
     }
 

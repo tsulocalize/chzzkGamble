@@ -29,9 +29,9 @@ public class VideoDonationService {
     private final Clock clock;
 
     @Transactional
-    public void save(String channelName, int cheese, String msg) {
+    public void save(String channelName, int cheese, String msg, boolean isHighlighter) {
         String videoId = youtubeClient.getVideoIdByTitleOrNull(msg);
-        videoDonationRepository.save(new VideoDonation(channelName, cheese, videoId, msg));
+        videoDonationRepository.save(new VideoDonation(channelName, cheese, videoId, msg, isHighlighter));
     }
 
     @Transactional(readOnly = true)

@@ -4,6 +4,7 @@ import com.chzzkGamble.videodonation.domain.VideoDonation;
 import com.chzzkGamble.videodonation.dto.Criteria;
 import com.chzzkGamble.videodonation.dto.VideoDonationRankingResponses;
 import com.chzzkGamble.videodonation.dto.VideoDonationResponse;
+import com.chzzkGamble.videodonation.dto.VideoDonationResponses;
 import com.chzzkGamble.videodonation.service.VideoDonationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +28,13 @@ public class VideoDonationController {
         return ResponseEntity.ok(recentlyVideoDonation.stream()
                 .map(VideoDonationResponse::from)
                 .toList());
+    }
+
+    @GetMapping("v1")
+    public ResponseEntity<VideoDonationResponses> readVideoDonationsV1(@RequestParam String channelName) {
+        List<VideoDonation> recentlyVideoDonation = videoDonationService.getRecentlyVideoDonation(channelName);
+
+        return ResponseEntity.ok(VideoDonationResponses.from(recentlyVideoDonation));
     }
 
     @GetMapping("/ranking")

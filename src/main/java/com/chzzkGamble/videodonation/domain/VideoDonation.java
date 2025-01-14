@@ -34,13 +34,16 @@ public class VideoDonation {
 
     private String videoName;
 
+    private boolean isHighlighter;
+
     @CreatedDate
     private LocalDateTime createdAt;
 
-    public VideoDonation(String channelName, int cheese, String videoId, String videoName) {
+    public VideoDonation(String channelName, int cheese, String videoId, String videoName, boolean isHighlighter) {
         this.channelName = channelName;
         this.cheese = cheese;
         this.videoId = videoId;
         this.videoName = videoName;
+        this.isHighlighter = isHighlighter;
     }
 }
