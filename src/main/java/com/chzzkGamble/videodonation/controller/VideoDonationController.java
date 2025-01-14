@@ -30,7 +30,7 @@ public class VideoDonationController {
                 .toList());
     }
 
-    @GetMapping("v1")
+    @GetMapping("/v1")
     public ResponseEntity<VideoDonationResponses> readVideoDonationsV1(@RequestParam String channelName) {
         List<VideoDonation> recentlyVideoDonation = videoDonationService.getRecentlyVideoDonation(channelName);
 
