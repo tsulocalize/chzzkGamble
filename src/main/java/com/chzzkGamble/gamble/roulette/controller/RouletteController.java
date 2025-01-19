@@ -8,6 +8,7 @@ import com.chzzkGamble.gamble.roulette.dto.RouletteUnitUpdateRequest;
 import com.chzzkGamble.gamble.roulette.service.RouletteService;
 import jakarta.servlet.http.Cookie;
 import jakarta.validation.Valid;
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -46,7 +47,7 @@ public class RouletteController {
                 .build();
     }
 
-    @PostMapping("/start")
+    @PatchMapping("/start")
     public ResponseEntity<Void> start(@CookieValue(name = "rouletteId") Cookie cookie) {
         // TODO : check connection is established
         rouletteService.startVote(UUID.fromString(cookie.getValue()));
@@ -73,6 +74,7 @@ public class RouletteController {
         return rouletteElements
                 .stream()
                 .map(element -> RouletteElementResponse.of(element, roulette.getRouletteUnit(), totalVote))
+                .sorted(Comparator.comparing(RouletteElementResponse::vote).reversed())
                 .toList();
     }
 

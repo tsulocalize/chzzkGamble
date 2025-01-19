@@ -25,7 +25,7 @@ public class DonationHandler {
         DonationMessage donationMessage = (DonationMessage) donationEvent.getSource();
         String elementName = getElementName(donationMessage.getMsg());
         if (elementName == null) {
-            return CompletableFuture.completedFuture(false); //투표용 도네가아니다.
+            return CompletableFuture.completedFuture(false); //투표용 도네가 아니다.
         }
         rouletteService.vote(donationMessage.getChannelName(), elementName, donationMessage.getCheese());
         return CompletableFuture.completedFuture(true);
