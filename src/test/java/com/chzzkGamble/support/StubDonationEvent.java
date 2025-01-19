@@ -12,7 +12,8 @@ public class StubDonationEvent extends DonationEvent {
                         "  \"bdy\": [\n" +
                         "    {\n" +
                         "      \"msg\": \"" + msg + "\",\n" +
-                        "      \"extras\": \"payAmount:" + cheese + ",donationType:" + type + "\"\n" +
+                        "      \"extras\": \"payAmount:" + cheese + ",donationType:" + type + "\",\n" +
+                        "      \"profile\": null\n" +
                         "    }\n" +
                         "  ]\n" +
                         "}"
