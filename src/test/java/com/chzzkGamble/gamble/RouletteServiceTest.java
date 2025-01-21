@@ -3,7 +3,10 @@ package com.chzzkGamble.gamble;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
+import com.chzzkGamble.chzzk.chat.service.ChzzkChatService;
 import com.chzzkGamble.gamble.roulette.domain.Roulette;
 import com.chzzkGamble.gamble.roulette.domain.RouletteElement;
 import com.chzzkGamble.gamble.roulette.repository.RouletteElementRepository;
@@ -14,10 +17,12 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.annotation.DirtiesContext;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -33,6 +38,14 @@ public class RouletteServiceTest {
     RouletteElementRepository rouletteElementRepository;
     @Autowired
     private RouletteRepository rouletteRepository;
+    @MockBean
+    private ChzzkChatService chzzkChatService;
+
+    @BeforeEach
+    void setUp() {
+        when(chzzkChatService.isConnected(any()))
+                .thenReturn(true);
+    }
 
     @Test
     @DisplayName("룰렛을 생성할 수 있다.")

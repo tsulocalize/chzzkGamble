@@ -1,5 +1,6 @@
 package com.chzzkGamble.gamble.roulette.controller;
 
+import com.chzzkGamble.chzzk.chat.service.ChzzkChatService;
 import com.chzzkGamble.gamble.roulette.domain.Roulette;
 import com.chzzkGamble.gamble.roulette.domain.RouletteElement;
 import com.chzzkGamble.gamble.roulette.dto.RouletteCreateRequest;
@@ -30,6 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class RouletteController {
 
     private final RouletteService rouletteService;
+    private final ChzzkChatService chzzkChatService;
 
     @PostMapping("/create")
     public ResponseEntity<?> createRoulette(@RequestBody @Valid RouletteCreateRequest request) {

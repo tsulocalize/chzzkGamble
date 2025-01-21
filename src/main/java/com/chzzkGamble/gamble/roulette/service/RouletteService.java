@@ -1,5 +1,6 @@
 package com.chzzkGamble.gamble.roulette.service;
 
+import com.chzzkGamble.chzzk.chat.service.ChzzkChatService;
 import com.chzzkGamble.exception.GambleException;
 import com.chzzkGamble.exception.GambleExceptionCode;
 import com.chzzkGamble.gamble.roulette.domain.Roulette;
@@ -24,6 +25,7 @@ public class RouletteService {
     private final RouletteRepository rouletteRepository;
     private final RouletteElementRepository rouletteElementRepository;
     private final Clock clock;
+    private final ChzzkChatService chzzkChatService;
 
     @Transactional
     public Roulette createRoulette(String channelName, int rouletteUnit) {
@@ -58,6 +60,9 @@ public class RouletteService {
     @Transactional
     public Roulette startVote(UUID rouletteId) {
         Roulette roulette = getRouletteByIdWithXLock(rouletteId);
+        if (!chzzkChatService.isConnected(roulette.getChannelName())) {
+            throw new GambleException(GambleExceptionCode.CHAT_NOT_CONNECTED);
+        }
         roulette.startVote();
         return rouletteRepository.save(roulette);
     }
@@ -65,6 +70,9 @@ public class RouletteService {
     @Transactional
     public Roulette endVote(UUID rouletteId) {
         Roulette roulette = getRouletteByIdWithXLock(rouletteId);
+        if (!chzzkChatService.isConnected(roulette.getChannelName())) {
+            throw new GambleException(GambleExceptionCode.CHAT_NOT_CONNECTED);
+        }
         roulette.endVote();
         return rouletteRepository.save(roulette);
     }
