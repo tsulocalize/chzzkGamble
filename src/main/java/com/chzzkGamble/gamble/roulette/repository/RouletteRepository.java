@@ -17,6 +17,8 @@ public interface RouletteRepository extends JpaRepository<Roulette, UUID> {
 
     Optional<Roulette> findByIdAndCreatedAtAfter(UUID id, LocalDateTime dateTime);
 
+    List<Roulette> findByVotingIsTrueAndCreatedAtAfter(LocalDateTime dateTime);
+
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("SELECT r "
             + "FROM Roulette AS r "

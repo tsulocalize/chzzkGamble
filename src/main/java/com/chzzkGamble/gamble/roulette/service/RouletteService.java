@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -94,5 +95,14 @@ public class RouletteService {
                 .orElseThrow(() -> new GambleException(
                         GambleExceptionCode.ROULETTE_NOT_FOUND,
                         "rouletteId : " + rouletteId));
+    }
+
+    @Transactional
+    @Scheduled(fixedDelayString = "${roulette.end-interval}")
+    public void endExpiredRouletteVoting() {
+        List<Roulette> expiredRoulettes = rouletteRepository.findByVotingIsTrueAndCreatedAtAfter(
+                LocalDateTime.now(clock).minusDays(1));
+
+        expiredRoulettes.forEach(Roulette::endVote);
     }
 }

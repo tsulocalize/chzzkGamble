@@ -4,4 +4,7 @@ advertise:
 chat:
   close-interval: 1000 # 1 second
 
+roulette:
+  end-interval: 1000 # 1 second
+
 INSTANCE_ID : test

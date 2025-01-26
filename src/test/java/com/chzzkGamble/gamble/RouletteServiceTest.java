@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 
 import com.chzzkGamble.chzzk.chat.service.ChzzkChatService;
@@ -12,8 +13,11 @@ import com.chzzkGamble.gamble.roulette.domain.RouletteElement;
 import com.chzzkGamble.gamble.roulette.repository.RouletteElementRepository;
 import com.chzzkGamble.gamble.roulette.repository.RouletteRepository;
 import com.chzzkGamble.gamble.roulette.service.RouletteService;
+import java.time.Clock;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -23,23 +27,35 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
+@ActiveProfiles("test")
 public class RouletteServiceTest {
 
     private static final String CHANNEL_NAME = "ch_name";
     private static final int ROULETTE_UNIT = 1000;
 
+    private static final Clock after1Day;
+    static {
+        long epochSecond = Clock.system(ZoneId.of("Asia/Seoul")).instant().getEpochSecond();
+        epochSecond += 24 * 60 * 60L - 10000; // 1 day - error bound
+        after1Day = Clock.fixed(Instant.ofEpochSecond(epochSecond), ZoneId.of("Asia/Seoul"));
+    }
+
     @Autowired
     RouletteService rouletteService;
     @Autowired
     RouletteElementRepository rouletteElementRepository;
-    @Autowired
-    private RouletteRepository rouletteRepository;
+    @SpyBean
+    private Clock clock;
     @MockBean
     private ChzzkChatService chzzkChatService;
+    @Autowired
+    private RouletteRepository rouletteRepository;
 
     @BeforeEach
     void setUp() {
@@ -218,14 +234,34 @@ public class RouletteServiceTest {
     @Test
     @DisplayName("룰렛 투표를 멈출 수 있다.")
     void endVote(){
-        //given
+        // given
         Roulette roulette = rouletteService.createRoulette(CHANNEL_NAME, ROULETTE_UNIT);
         roulette.startVote();
 
-        //when
+        // when
         Roulette actual = rouletteService.endVote(roulette.getId());
 
-        //then
+        // then
         assertThat(actual.isVoting()).isFalse();
+    }
+
+    @Test
+    @DisplayName("생성한 지 24시간이 지난 룰렛은 투표중일 수 없다")
+    void endExpiredRouletteVoting() throws InterruptedException {
+        // given
+        Roulette roulette = new Roulette("ch_name", 1000);
+        roulette.startVote();
+        rouletteRepository.save(roulette);
+
+        doReturn(Instant.now(after1Day))
+                .when(clock)
+                .instant();
+
+        // when
+        Thread.sleep(2000L);
+        
+        // then
+        assertThat(rouletteService.hasVotingRoulette("ch_name"))
+                .isFalse();
     }
 }
