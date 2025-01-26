@@ -112,7 +112,6 @@ public class ChzzkChatService {
     }
 
     private void disconnectChatRoom(String channelName) {
-        // 본인(서버)가 연결한 채널만 가져오도록 필터링이 필요하다.
         chatRepository.findByChannelNameAndOpenedIsTrue(channelName)
                         .ifPresent(chat -> {
                             if (!chat.getInstanceId().equals(EnvironmentVariables.INSTANCE_ID)) {
